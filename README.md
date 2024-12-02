@@ -46,7 +46,7 @@ For using the 6G environment, just ``import gym_6G`` and set up as any gymnasium
 > Therefore, we provide the pre-computed results: ADD LINK.<br/>
 > Just place these in the `results` folder and run `unzip data.zip` to extract the files.
 
-We provide a single bash script that can be used to re-produce the full data set undlerlying the results in the paper:
+We provide a single bash script that can be used to re-produce the full data set underlying the results in the paper:
 ```angular2html
 ./train.sh
 ```
