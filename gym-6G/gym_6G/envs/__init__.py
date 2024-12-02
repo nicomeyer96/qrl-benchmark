@@ -1,0 +1,1 @@
+from .beam_management_6G import BeamManagement6G

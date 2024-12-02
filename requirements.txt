@@ -1,0 +1,4 @@
+gym-6G==1.0
+tianshou==1.0.0
+torch==2.3.0
+pennylane==0.36.0
