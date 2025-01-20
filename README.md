@@ -1,11 +1,19 @@
-# Benchmarking QRL on 6G
+# Benchmarking Quantum Reinforcement Learning
 
 [![Static Badge](https://img.shields.io/badge/arXiv-0000.00000-red)
 ](https://arxiv.org/search/quant-ph?searchtype=author&query=Meyer,+N) [![Static Badge](https://img.shields.io/badge/Zenodo-000000-blue)](https://arxiv.org/search/quant-ph?searchtype=author&query=Meyer,+N)
 
-This repo contains the code for the paper ["Robust Benchmarking of Quantum Reinforcement Learning", X. XXX et al., arXiv:0000.00000 (2024)](https://arxiv.org/search/quant-ph?searchtype=author&query=Meyer,+N).
+This repo contains the code for the paper ["Benchmarking Quantum Reinforcement Learning", N. Meyer et al., arXiv:0000.00000 (2024)](https://arxiv.org/search/quant-ph?searchtype=author&query=Meyer,+N).
 
-> Abstract
+> Benchmarking and establishing proper statistical validation metrics for reinforcement learning remain ongoing 
+> challenges, with no established consensus. The emergence of quantum computing and its potential applications in 
+> quantum reinforcement learning further complicate benchmarking efforts. To enable valid performance comparisons, 
+> we propose a **novel benchmarking procedure**. It is based on a **statistical estimator for sample complexity**, 
+> a **rigorous definition of outperformance**, and a **flexible environment, modeling a task relevant for quantum 
+> computing**. Our  approach casts doubt on some previous claims regarding the superiority of quantum reinforcement 
+> learning. Through experiments involving an unprecedented number of training runs to ensure statistical significance, 
+> we still identify possible advantages; however, our findings are more nuanced overall. We discuss the potential 
+> limitations of these results and explore their implications for empirical quantum advantage.
 
 <img src="fig1.png" width="50%">
 
@@ -55,14 +63,14 @@ Note, that executing this script takes quite some time, and therefore should be 
 Once the raw results have been produced -- or downloaded -- the scripts in the `plot/` folder can be used to reproduce 
 the paper figures by running ```python plot/figX.py```. This includes:
 * `plot_fig1.py`: **Fig. 1**, i.e. surface plot of sample complexities with DDQN
-* `plot_fig5.py`: **Fig. 5**, i.e. plot of sample complexities with DDQN, including error bars
-* `plot_fig6.py`: **Fig. 6**, i.e. scaling behavior with increasing width / number of qubits
-* `plot_fig7.py`: **Fig. 7**, i.e. absolute received energies for trained models (takes some time)
-* `plot_fig14.py`: **Fig. 14** (appendix), i.e. plot of sample complexities with PPO, including error bars
-* `plot_fig16a.py`: **Fig. 16(a)** (appendix), i.e. ablation study for classical models
-* `plot_fig16b.py`: **Fig. 16(b)** (appendix), i.e. ablation study for quantum models
-* `plot_fig17a.py`: **Fig. 17(a)** (appendix), i.e. task complexity for varying trajectory degrees
-* `plot_fig17b.py`: **Fig. 17(b)** (appendix), i.e. task complexity for varying antenna numbers
+* `plot_fig6.py`: **Fig. 6**, i.e. plot of sample complexities with DDQN, including error bars
+* `plot_fig7.py`: **Fig. 7**, i.e. scaling behavior with increasing width / number of qubits
+* `plot_fig8.py`: **Fig. 8**, i.e. absolute received energies for trained models (takes some time)
+* `plot_fig16.py`: **Fig. 16** (appendix), i.e. plot of sample complexities with PPO, including error bars
+* `plot_fig18a.py`: **Fig. 18(a)** (appendix), i.e. ablation study for classical models
+* `plot_fig18b.py`: **Fig. 18(b)** (appendix), i.e. ablation study for quantum models
+* `plot_fig19a.py`: **Fig. 19(a)** (appendix), i.e. task complexity for varying trajectory degrees
+* `plot_fig19b.py`: **Fig. 19(b)** (appendix), i.e. task complexity for varying antenna numbers
 
 The results will be stored under their respective names as pdf files in the folder `plot/plots/XXX.pdf`.
 
@@ -158,9 +166,9 @@ which is supported by the Bavarian state with funds from the Hightech Agenda Bay
 If you use this implementation or results from the paper, please cite our work as
 
 ```
-@article{xxx,
-  title={XXX},
-  author={XXX},
+@article{meyer2024benchmarking,
+  title={Benchmarking Quantum Reinforcement Learning},
+  author={Meyer, Nico and Ufrecht, Christian and Yammine, George and Kontes, Georgios and Mutschler, Christopher and Scherer, Daniel D.},
   journal={arXiv:...},
   year={2024},
   doi={.../arXiv...}

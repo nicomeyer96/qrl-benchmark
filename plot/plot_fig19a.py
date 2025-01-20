@@ -113,6 +113,6 @@ if __name__ == '__main__':
             hpack.get_children()[0].set_width(0)
 
     # save figure
-    path = os.path.join(os.path.dirname(__file__), 'plots', f'fig17a.pdf')
+    path = os.path.join(os.path.dirname(__file__), 'plots', f'fig19a.pdf')
     plt.savefig(path, format='pdf')
     print(f'Figure saved to {path}.')

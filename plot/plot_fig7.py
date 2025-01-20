@@ -11,150 +11,187 @@
 
 import os
 import numpy as np
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-import pickle
-import gymnasium as gym
-import warnings
+import matplotlib as mpl
 
-import gym_6G  # required for loading custom environment
-from helper import setup_figure_latex_layout, test_model, COLORS
-
-
-def find_best_models(model_path, model_name, model_ids, number=10):
-    """ Find ids of best performing models (according to final validation results) """
-    final_val_returns = []
-    for model_id in model_ids:
-        # load model and extract validation returns, average, and extract final one
-        data = pickle.load(open(os.path.join(model_path, f'{model_name}-{model_id}.pkl'), 'rb'))
-        final_val_returns.append(np.average(data['val_returns'], axis=1)[-1])
-    return np.argsort(final_val_returns)[-number:]
-
-
-def test_best_models(model_path, model_name, model_ids, number_best_performing=10, number_test_runs=100, mode='absolute',
-                     env_configuration=None):
-    """ Determine and test best performing models """
-    print(f'\nDetermine and test {number_best_performing} best performing `{model}` models for {number_test_runs} runs each:')
-    best_model_ids = find_best_models(model_path, model_name, model_ids, number=number_best_performing)
-    test_results = [test_model(os.path.join(path, f'{model}-{best_model_id}.pkl'), runs=number_test_runs, mode=mode,
-                               env_configuration=env_configuration)
-                    for best_model_id in best_model_ids]
-    return np.array(test_results)
-
-
-def test_untrained_models(env_configuration, runs=1000, action_selection='optimal', mode='absolute'):
-    """ Test optimal and random actions. """
-    assert mode in ['absolute', 'relative']
-    assert action_selection in ['optimal', 'random']
-    # set up environment
-    env = gym.make('6G-v0', size=env_configuration['size'], steps=env_configuration['steps'],
-                   antennas=env_configuration['antennas'], trajectory_degree=env_configuration['degree'],
-                   mode='test' if 'absolute' == mode else 'val')
-
-    # perform testing
-    test_results = []
-    print(f'\nPerform testing with {action_selection} action for {runs} runs.')
-    for run in range(runs):
-        print(f'{run+1}/{runs} done', end='\r')
-        _, _ = env.reset()
-        while True:
-            # select either optimal or random action
-            action = env.optimal_action() if 'optimal' == action_selection else env.action_space.sample()  # noqa
-            _, reward, terminated, _, _ = env.step(action)
-            if terminated:  # if terminated extract result and break to reset environment
-                test_results.append(reward)
-                break
-    print()
-    return np.array(test_results)
+from cluster_bootstrapping import evaluate_sampling_complexity_with_percentiles
+from helper import setup_figure_latex_layout, COLORS
 
 
 if __name__ == '__main__':
 
-    # standard environment configuration to test on (same that was trained on)
-    configuration = {
-        'size': (6.0, 6.0),
-        'steps': 200,
-        'degree': 3,
-        'antennas': [((1.5, 1.0), (1.0, 0.0)), ((1.5, 5.0), (-1.0, 0.0)), ((4.5, 3.0), (0.0, 1.0))]
-    }
-    # path to train data
-    path = os.path.join('results', 'dqn', 'a3-main', 'deg3')
-
     # determine figsize for paper
-    figsize = setup_figure_latex_layout(4.0, single_column=True)
+    figsize = setup_figure_latex_layout(2.5, single_column=True)
 
     # set up figure, shift y-axis to right side
     plt.rcParams['ytick.right'], plt.rcParams['ytick.labelright'] = True, True
     plt.rcParams['ytick.left'], plt.rcParams['ytick.labelleft'] = False, False
-    fig, ax = plt.subplots(4, 1, sharex=True, sharey=False, figsize=figsize,
-                           gridspec_kw={'right': 0.855, 'left': 0.01, 'bottom': 0.1, 'top': 0.95, 'hspace': 0.65})
+    fig, ax = plt.subplots(2, 1, sharex=False, sharey=True, figsize=figsize,
+                           gridspec_kw={'right': 0.86, 'left': 0.05, 'bottom': 0.125, 'top': 0.925, 'hspace': 0.75})
 
-    # select models to compare, set up model, title, admissible ids, and color
-    models = ['Q[14-4]', 'C[64-2]']
-    models_title = ['Quantum Model (14-4)', 'Classical Model (64-2)']
-    models_ids = [range(100), range(100)]
-    models_color = [COLORS[m] for m in models]
+    # plot for complexity with trajectory degree
+    epsilon, delta = 0.15, 0.75
 
-    # iterate over and plot test results for best performing trained models
-    # Note: The results in the paper were produced with 1000 test_runs, this however takes quite some time to compute
-    best_models, test_runs = 10, 100
-    if test_runs < 1000:
-        warnings.warn('For reliable results the `test_runs` should be set to 1000.')
-    for axis, model, model_id, model_color, model_title in zip(ax[:len(models)], models, models_ids, models_color, models_title):
+    ##############################
+    ### plot for increasing width (classical)
 
-        # determine and test best performing models
-        test_result = test_best_models(path, model, model_id, number_best_performing=best_models,
-                                       number_test_runs=test_runs, env_configuration=configuration)
+    # select models to compare
+    models = ['C[16-2]', 'C[32-2]', 'C[64-2]', 'C[128-2]', 'C[256-2]']
+    models_ids = [range(100), range(100), range(100), range(100), range(100)]
 
-        # determine average and std of test results for title
-        test_result_per_model = np.average(test_result, axis=1)
-        avg_test_result, std_test_result = np.average(test_result_per_model), np.std(test_result_per_model)
-        axis.set_title(r'$\textbf{' + f'{model_title}' + r':}~$' + f'   {avg_test_result:.2f} ' + r'$\pm$' + f' {std_test_result:.2f}', fontsize=8)
+    # iterate over models to compare
+    sampling_complexities_width = []
+    for model, model_ids in zip(models, models_ids):
+        # extract sampling complexities, post-process for plotting of percentiles
+        sampling_complexities = evaluate_sampling_complexity_with_percentiles(
+            path=os.path.join('results', 'dqn', 'a3-main', 'deg3'),
+            filename=model,
+            experiment_ids=model_ids,
+            epsilons=[epsilon],
+            deltas=[delta],
+            samples_per_epoch=2000,
+            max_epochs=100
+        )
+        sampling_complexities[:, :, 1] = sampling_complexities[:, :, 0] - sampling_complexities[:, :, 1]  # lower percentile
+        sampling_complexities[:, :, 2] = sampling_complexities[:, :, 2] - sampling_complexities[:, :, 0]  # upper percentile
+        sampling_complexities_width.append(sampling_complexities[0][0])
+    sampling_complexities_width = np.array(sampling_complexities_width)
 
-        # flatten data
-        test_result = test_result.flatten()
+    # plot data point and error bar indicating percentiles
+    ax[1].scatter([0], sampling_complexities_width[0, 0], color=COLORS['classical_model'], marker='^')
+    ax[1].scatter([1], sampling_complexities_width[1, 0], color=COLORS['classical_model'], marker='<')
+    ax[1].scatter([2], sampling_complexities_width[2, 0], color=COLORS['classical_model'], marker='>')
+    ax[1].scatter([3], sampling_complexities_width[3, 0], color=COLORS['classical_model'], marker='.')
+    ax[1].scatter([4], sampling_complexities_width[4, 0], color=COLORS['classical_model'], marker='.')
+    ax[1].plot([0, 1, 2, 3, 4], sampling_complexities_width[:, 0], color=COLORS['classical_model'], linestyle='--', linewidth=.75)
+    ax[1].errorbar([0, 1, 2, 3, 4], sampling_complexities_width[:, 0], yerr=np.transpose(sampling_complexities_width[:, 1:], (1, 0)),
+                   fmt='none', capsize=3, capthick=.85, elinewidth=.85, ecolor='k')
 
-        # compute and plot (normalized) histogram
-        counts, bins = np.histogram(test_result, bins=30, range=(0, 30))
-        axis.stairs(counts, bins, fill=True, color=model_color, edgecolor='black')
+    # enforce same limits for all plots and set ticks, margins for nicer plotting
+    ax[1].set_ylim(bottom=0, top=215000)
+    ax[1].set_yticks([50000, 100000, 150000, 200000], ['$50$k', '$100$k', '$150$k', '$200$k'])
+    ax[1].set_xticks([0, 1, 2, 3, 4], ['$16$', '$32$', '$64$', '$128$', '$256$'])
+    ax[1].set_xmargin(0.15)
 
-        # set grid and limits for uniform plotting
-        axis.grid(axis='y')
-        axis.set_axisbelow(True)
-        axis.set_xlim(left=0.1, right=29.9)
-        axis.set_ylim(bottom=0, top=best_models * test_runs / 10)
+    # plot epsilon and delta labels to top and left side
+    ax[1].set_title(r'$\varepsilon=' + f'{epsilon:.2f}' + r'$', fontsize=8)
+    ax[1].set_ylabel(r'$\delta=' + f'{delta:.2f}' + r'$', fontsize=8)
+    ax[1].set_xlabel(r'$\textbf{width}$', fontsize=8, labelpad=1.0)
 
-    # iterate over and plot test results for optimal and random actions
-    modes = ['optimal', 'random']
-    modes_color = [COLORS[m] for m in modes]
-    modes_title = ['Optimal Actions', 'Random Actions']
-    for axis, mode, mode_color, mode_title in zip(ax[len(models):], modes, modes_color, modes_title):
+    # set y-grid and send to background (breaks if done multiple times)
+    ax[1].grid(axis='y')
+    ax[1].set_axisbelow(True)
 
-        # test with optimal / random action
-        test_result = test_untrained_models(configuration, runs=best_models * test_runs, action_selection=mode, mode='absolute')
+    # place number of parameters next to labels
+    ax[1].text(0, 162000, r'$387$', horizontalalignment='center', verticalalignment='center', fontsize=6)
+    ax[1].text(1, 120000, r'$1283$', horizontalalignment='center', verticalalignment='center', fontsize=6)
+    ax[1].text(2, 85000, r'$4611$', horizontalalignment='center', verticalalignment='center', fontsize=6)
+    ax[1].text(3, 85000, r'$17411$', horizontalalignment='center', verticalalignment='center', fontsize=6)
+    ax[1].text(4, 85000, r'$67587$', horizontalalignment='center', verticalalignment='center', fontsize=6)
 
-        # determine average of test results for title
-        avg_test_result = np.average(test_result)
-        axis.set_title(r'$\textbf{' + f'{mode_title}' + r':}~$' + f'   {avg_test_result:.2f}', fontsize=8)
+    # set up and place legend
+    legend_elements = [plt.plot([], marker="", ls="", label=r'Classical (depth 2)')[0]]
+    leg_0 = ax[1].legend(handles=legend_elements+[],
+                         loc='upper center', handletextpad=0.01, columnspacing=0.5, bbox_to_anchor=(0.792, 1.05),
+                         fontsize=8)
+    leg_0.get_frame().set_edgecolor('k')
+    leg_0.get_frame().set_linewidth(.75)
+    # remove spacing (https://stackoverflow.com/questions/44071525/matplotlib-add-titles-to-the-legend-rows)
+    for vpack in leg_0._legend_handle_box.get_children()[:1]:  # noqa
+        for hpack in vpack.get_children():
+            hpack.get_children()[0].set_width(0)
+    # leg_0 = ax[0].legend(loc='upper center', handletextpad=0.01, columnspacing=0.5, bbox_to_anchor=(0.836, 1.05), fontsize=8)
+    # leg_0.get_frame().set_edgecolor('k')
+    # leg_0.get_frame().set_linewidth(.75)
 
-        # compute and plot (normalized) histogram
-        counts, bins = np.histogram(test_result, bins=30, range=(0, 30))
-        axis.stairs(counts, bins, fill=True, color=mode_color, edgecolor='black')
+    ##############################
+    ### plot for increasing width (quantum)
 
-        # set grid and limits for uniform plotting
-        axis.grid(axis='y')
-        axis.set_axisbelow(True)
-        axis.set_xlim(left=0.1, right=29.9)
-        if 'random' == mode:
-            axis.set_ylim(bottom=0, top=best_models * test_runs / 5)
-        else:
-            axis.set_ylim(bottom=0, top=best_models * test_runs / 10)
+    # select models to compare
+    models = ['Q[6-4]', 'Q[8-4]', 'Q[10-4]', 'Q[12-4]', 'Q[14-4]']
+    models_ids = [range(100), range(100), range(100), range(100), range(100)]
 
-    # set axis labels
-    fig.supxlabel(r'$\textbf{absolute energy} ~~(\pm 0.5)$', fontsize=8, y=-0.0)
-    fig.supylabel(r'$\textbf{count}~~$' + f'(out of {best_models * test_runs})', fontsize=8, x=0.965, rotation=-270)
+    # iterate over models to compare
+    sampling_complexities_qubits = []
+    for model, model_ids in zip(models, models_ids):
+        # extract sampling complexities, post-process for plotting of percentiles
+        sampling_complexities = evaluate_sampling_complexity_with_percentiles(
+            path=os.path.join('results', 'dqn', 'a3-main', 'deg3'),
+            filename=model,
+            experiment_ids=model_ids,
+            epsilons=[epsilon],
+            deltas=[delta],
+            samples_per_epoch=2000,
+            max_epochs=100
+        )
+        sampling_complexities[:, :, 1] = sampling_complexities[:, :, 0] - sampling_complexities[:, :,
+                                                                          1]  # lower percentile
+        sampling_complexities[:, :, 2] = sampling_complexities[:, :, 2] - sampling_complexities[:, :,
+                                                                          0]  # upper percentile
+        sampling_complexities_qubits.append(sampling_complexities[0][0])
+    sampling_complexities_qubits = np.array(sampling_complexities_qubits)
+
+    # plot data point and error bar indicating percentiles
+    ax[0].scatter([0], sampling_complexities_qubits[0, 0], color=COLORS['quantum_model'], marker='.',
+                  label=r'$\text{Quantum}$')
+    ax[0].scatter([1], sampling_complexities_qubits[1, 0], color=COLORS['quantum_model'], marker='.',
+                  label=r'$\text{Quantum}$')
+    ax[0].scatter([2], sampling_complexities_qubits[2, 0], color=COLORS['quantum_model'], marker='o',
+                  label=r'$\text{Quantum}$')
+    ax[0].scatter([3], sampling_complexities_qubits[3, 0], color=COLORS['quantum_model'], marker='.',
+                  label=r'$\text{Quantum}$')
+    ax[0].scatter([4], sampling_complexities_qubits[4, 0], color=COLORS['quantum_model'], marker='H',
+                  label=r'$\text{Quantum}$')
+    # ax[1].scatter([0, 1, 2, 3, 4], sampling_complexities_qubits[:, 0], color=COLORS['quantum'], marker='o',
+    #               label=r'$\text{Quantum}$')
+    ax[0].plot([0, 1, 2, 3, 4], sampling_complexities_qubits[:, 0], color=COLORS['quantum_model'], linestyle='--',
+               linewidth=.75)
+    ax[0].errorbar([0, 1, 2, 3, 4], sampling_complexities_qubits[:, 0],
+                   yerr=np.transpose(sampling_complexities_qubits[:, 1:], (1, 0)),
+                   fmt='none', capsize=3, capthick=.85, elinewidth=.85, ecolor='k')
+
+    # enforce same limits for all plots and set ticks, margins for nicer plotting
+    ax[0].set_ylim(bottom=0, top=215000)
+    ax[0].set_yticks([50000, 100000, 150000, 200000], ['$50$k', '$100$k', '$150$k', '$200$k'])
+    ax[0].set_xticks([0, 1, 2, 3, 4], ['$6$', '$8$', '$10$', '$12$', '$14$'])
+    ax[0].set_xmargin(0.15)
+
+    # plot epsilon and delta labels to top and left side
+    ax[0].set_title(r'$\varepsilon=' + f'{epsilon:.2f}' + r'$', fontsize=8)
+    ax[0].set_ylabel(r'$\delta=' + f'{delta:.2f}' + r'$', fontsize=8)
+    ax[0].set_xlabel(r'$\textbf{qubits}$', fontsize=8, labelpad=1.0)
+
+    # set y-grid and send to background (breaks if done multiple times)
+    ax[0].grid(axis='y')
+    ax[0].set_axisbelow(True)
+
+    # place number of parameters next to labels
+    ax[0].text(0, 124000, r'$189$', horizontalalignment='center', verticalalignment='center', fontsize=6)
+    ax[0].text(1, 165000, r'$251$', horizontalalignment='center', verticalalignment='center', fontsize=6)
+    ax[0].text(2, 117000, r'$313$', horizontalalignment='center', verticalalignment='center', fontsize=6)
+    ax[0].text(3, 117000, r'$375$', horizontalalignment='center', verticalalignment='center', fontsize=6)
+    ax[0].text(4, 32000, r'$437$', horizontalalignment='center', verticalalignment='center', fontsize=6)
+
+    # set up and place legend
+    legend_elements = [plt.plot([], marker="", ls="", label=r'Quantum (4 layers)')[0]]
+    leg_1 = ax[0].legend(handles=legend_elements+[],
+                         loc='upper center', handletextpad=0.01, columnspacing=0.5, bbox_to_anchor=(0.784, 1.05),
+                         fontsize=8)
+    leg_1.get_frame().set_edgecolor('k')
+    leg_1.get_frame().set_linewidth(.75)
+    # remove spacing (https://stackoverflow.com/questions/44071525/matplotlib-add-titles-to-the-legend-rows)
+    for vpack in leg_1._legend_handle_box.get_children()[:1]:  # noqa
+        for hpack in vpack.get_children():
+            hpack.get_children()[0].set_width(0)
+    # leg_1 = ax[1].legend(loc='upper center', handletextpad=0.01, columnspacing=0.5, bbox_to_anchor=(0.836, 1.05),
+    #                      fontsize=8)
+    # leg_1.get_frame().set_edgecolor('k')
+    # leg_1.get_frame().set_linewidth(.75)
+
+    # set shared axis labels
+    fig.supylabel(r'$\textbf{sample complexity}$', fontsize=8, x=0.97, rotation=-270)
 
     # save figure
-    path = os.path.join(os.path.dirname(__file__), 'plots', f'fig7.pdf')
+    path = os.path.join(os.path.dirname(__file__), 'plots', 'fig7.pdf')
     plt.savefig(path, format='pdf')
     print(f'Figure saved to {path}.')
