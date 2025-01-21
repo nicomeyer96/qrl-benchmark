@@ -61,7 +61,7 @@ We provide a single bash script that can be used to re-produce the full data set
 Note, that executing this script takes quite some time, and therefore should be offloaded to some HPC facilities.
 
 Once the raw results have been produced -- or downloaded -- the scripts in the `plot/` folder can be used to reproduce 
-the paper figures by running ```python plot/figX.py```. This includes:
+the paper figures by running ```python plot/plot_figX.py```. This includes:
 * `plot_fig1.py`: **Fig. 1**, i.e. surface plot of sample complexities with DDQN
 * `plot_fig6.py`: **Fig. 6**, i.e. plot of sample complexities with DDQN, including error bars
 * `plot_fig7.py`: **Fig. 7**, i.e. scaling behavior with increasing width / number of qubits
@@ -166,11 +166,11 @@ which is supported by the Bavarian state with funds from the Hightech Agenda Bay
 If you use this implementation or results from the paper, please cite our work as
 
 ```
-@article{meyer2024benchmarking,
+@article{meyer2025benchmarking,
   title={Benchmarking Quantum Reinforcement Learning},
   author={Meyer, Nico and Ufrecht, Christian and Yammine, George and Kontes, Georgios and Mutschler, Christopher and Scherer, Daniel D.},
   journal={arXiv:...},
-  year={2024},
+  year={2025},
   doi={.../arXiv...}
 }
 ```
