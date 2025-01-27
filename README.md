@@ -141,7 +141,7 @@ evaluate_sampling_complexity(os.path.join('results', 'dqn', 'a3-main', 'deg3'), 
                              [0.5, 0.3, 0.1]  # failure probability, i.e. delta)
 ```
 
-More usage examples can be found in the various `figX_XXX.py` files, see the section on reproducing the paper results. 
+More usage examples can be found in the various `plot_figX.py` files, see the section on reproducing the paper results. 
 
 ## Acknowledgements
 
