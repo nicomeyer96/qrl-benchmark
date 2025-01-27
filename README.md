@@ -1,7 +1,7 @@
 # Benchmarking Quantum Reinforcement Learning
 
 [![Static Badge](https://img.shields.io/badge/arXiv-0000.00000-red)
-](https://arxiv.org/search/quant-ph?searchtype=author&query=Meyer,+N) [![Static Badge](https://img.shields.io/badge/Zenodo-000000-blue)](https://arxiv.org/search/quant-ph?searchtype=author&query=Meyer,+N)
+](https://arxiv.org/search/quant-ph?searchtype=author&query=Meyer,+N) [![Static Badge](https://img.shields.io/badge/Zenodo-14745671-blue)](https://doi.org/10.5281/zenodo.14745672)
 
 This repo contains the code for the paper ["Benchmarking Quantum Reinforcement Learning", N. Meyer et al., arXiv:0000.00000 (2025)](https://arxiv.org/search/quant-ph?searchtype=author&query=Meyer,+N).
 
@@ -51,7 +51,7 @@ For using the 6G environment, just ``import gym_6G`` and set up as any gymnasium
 > **Downloading Pre-Computed Results:** <br/>
 > Producing the full set of raw results for the paper is very computationally extensive,
 > i.e. we expect it to take about 17.500 core hours on a typical 3.7GHz processor.<br/><br/>
-> Therefore, we provide the pre-computed results: ADD LINK.<br/>
+> Therefore, we provide the pre-computed results: https://doi.org/10.5281/zenodo.14745672.<br/>
 > Just place these in the `results` folder and run `unzip data.zip` to extract the files.
 
 We provide a single bash script that can be used to re-produce the full data set underlying the results in the paper:
