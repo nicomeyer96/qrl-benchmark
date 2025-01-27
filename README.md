@@ -3,17 +3,17 @@
 [![Static Badge](https://img.shields.io/badge/arXiv-0000.00000-red)
 ](https://arxiv.org/search/quant-ph?searchtype=author&query=Meyer,+N) [![Static Badge](https://img.shields.io/badge/Zenodo-000000-blue)](https://arxiv.org/search/quant-ph?searchtype=author&query=Meyer,+N)
 
-This repo contains the code for the paper ["Benchmarking Quantum Reinforcement Learning", N. Meyer et al., arXiv:0000.00000 (2024)](https://arxiv.org/search/quant-ph?searchtype=author&query=Meyer,+N).
+This repo contains the code for the paper ["Benchmarking Quantum Reinforcement Learning", N. Meyer et al., arXiv:0000.00000 (2025)](https://arxiv.org/search/quant-ph?searchtype=author&query=Meyer,+N).
 
-> Benchmarking and establishing proper statistical validation metrics for reinforcement learning remain ongoing 
-> challenges, with no established consensus. The emergence of quantum computing and its potential applications in 
-> quantum reinforcement learning further complicate benchmarking efforts. To enable valid performance comparisons, 
-> we propose a **novel benchmarking procedure**. It is based on a **statistical estimator for sample complexity**, 
-> a **rigorous definition of outperformance**, and a **flexible environment, modeling a task relevant for quantum 
-> computing**. Our  approach casts doubt on some previous claims regarding the superiority of quantum reinforcement 
-> learning. Through experiments involving an unprecedented number of training runs to ensure statistical significance, 
-> we still identify possible advantages; however, our findings are more nuanced overall. We discuss the potential 
-> limitations of these results and explore their implications for empirical quantum advantage.
+> Benchmarking and establishing proper statistical validation metrics for reinforcement learning (RL) remain ongoing 
+> challenges, where no consensus has been established yet. The emergence of quantum computing and its potential 
+> applications in quantum reinforcement learning (QRL) further complicate benchmarking efforts. To enable valid 
+> performance comparisons and to streamline current research in this area, we propose a **novel benchmarking methodology**, 
+> which is based on a **statistical estimator for sample complexity** and a **definition of statistical outperformance**. 
+> Furthermore, considering QRL, our methodology casts doubt on some previous claims regarding its superiority. We 
+> conducted experiments on a **novel benchmarking environment with flexible levels of complexity**. While we still identify 
+> possible advantages, our findings are more nuanced overall. We discuss the potential limitations of these results and 
+> explore their implications for empirical research on quantum advantage in QRL.
 
 <img src="fig1.png" width="50%">
 
