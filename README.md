@@ -1,9 +1,9 @@
 # Benchmarking Quantum Reinforcement Learning
 
-[![Static Badge](https://img.shields.io/badge/arXiv-0000.00000-red)
-](https://arxiv.org/search/quant-ph?searchtype=author&query=Meyer,+N) [![Static Badge](https://img.shields.io/badge/Zenodo-14745671-blue)](https://doi.org/10.5281/zenodo.14745672)
+[![Static Badge](https://img.shields.io/badge/arXiv-2501.15893-red)
+](https://doi.org/10.48550/arXiv.2501.15893) [![Static Badge](https://img.shields.io/badge/Zenodo-14745671-blue)](https://doi.org/10.5281/zenodo.14745672)
 
-This repo contains the code for the paper ["Benchmarking Quantum Reinforcement Learning", N. Meyer et al., arXiv:0000.00000 (2025)](https://arxiv.org/search/quant-ph?searchtype=author&query=Meyer,+N).
+This repo contains the code for the paper ["Benchmarking Quantum Reinforcement Learning", N. Meyer et al., arXiv:2501.15893 (2025)](https://arxiv.org/search/quant-ph?searchtype=author&query=Meyer,+N).
 
 > Benchmarking and establishing proper statistical validation metrics for reinforcement learning (RL) remain ongoing 
 > challenges, where no consensus has been established yet. The emergence of quantum computing and its potential 
@@ -169,9 +169,9 @@ If you use this implementation or results from the paper, please cite our work a
 @article{meyer2025benchmarking,
   title={Benchmarking Quantum Reinforcement Learning},
   author={Meyer, Nico and Ufrecht, Christian and Yammine, George and Kontes, Georgios and Mutschler, Christopher and Scherer, Daniel D.},
-  journal={arXiv:...},
+  journal={arXiv:2501.15893},
   year={2025},
-  doi={.../arXiv...}
+  doi={10.48550/arXiv.2501.15893}
 }
 ```
 
