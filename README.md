@@ -1,9 +1,9 @@
 # Benchmarking Quantum Reinforcement Learning
 
 [![Static Badge](https://img.shields.io/badge/arXiv-2501.15893-red)
-](https://doi.org/10.48550/arXiv.2501.15893) [![Static Badge](https://img.shields.io/badge/Zenodo-14745671-blue)](https://doi.org/10.5281/zenodo.14745672)
+](https://doi.org/10.48550/arXiv.2501.15893) [![Static Badge](https://img.shields.io/badge/PMLR-267:43934-green)](https://proceedings.mlr.press/v267/meyer25b.html) [![Static Badge](https://img.shields.io/badge/Zenodo-14745671-blue)](https://doi.org/10.5281/zenodo.14745672)
 
-This repo contains the code for the paper ["Benchmarking Quantum Reinforcement Learning", N. Meyer et al., arXiv:2501.15893 (2025)](https://arxiv.org/search/quant-ph?searchtype=author&query=Meyer,+N).
+This repo contains the code for the paper ["Benchmarking Quantum Reinforcement Learning", N. Meyer et al., International Conference on Machine Learning, PMLR 267:43934-43964, 2025](https://proceedings.mlr.press/v267/meyer25b.html).
 
 > Benchmarking and establishing proper statistical validation metrics for reinforcement learning (RL) remain ongoing 
 > challenges, where no consensus has been established yet. The emergence of quantum computing and its potential 
@@ -166,12 +166,16 @@ which is supported by the Bavarian state with funds from the Hightech Agenda Bay
 If you use this implementation or results from the paper, please cite our work as
 
 ```
-@article{meyer2025benchmarking,
-  title={Benchmarking Quantum Reinforcement Learning},
-  author={Meyer, Nico and Ufrecht, Christian and Yammine, George and Kontes, Georgios and Mutschler, Christopher and Scherer, Daniel D.},
-  journal={arXiv:2501.15893},
-  year={2025},
-  doi={10.48550/arXiv.2501.15893}
+@inproceedings{meyer2025benchmarking,
+	title={Benchmarking {Q}uantum {R}einforcement {L}earning}, 
+    author={Meyer, Nico and Ufrecht, Christian and Yammine, George and Kontes, Georgios and Mutschler, Christopher and Scherer, Daniel D},
+    booktitle={Proceedings of the 42nd International Conference on Machine Learning (ICML)},
+    publisher={PMLR},
+    volume={267}, 
+	   pages={43934-43964},
+    year = {2025},
+	   address={Vancouver, BC, Canada},
+    url={https://proceedings.mlr.press/v267/meyer25b.html}
 }
 ```
 
